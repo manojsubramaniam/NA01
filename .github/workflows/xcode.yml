@@ -31,6 +31,31 @@ jobs:
           # Apply the provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $RUNNER_TEMP/build_pp.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
+      
+      - name: check Xcode version
+        run: /usr/bin/xcodebuild -version
+      
+      - name: Copy Podfile
+        run: cp -r SignIn/Podfile .
+        
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+          pod repo list
+          pod setup
+      
+      - name: Install dependencies
+        run: pod install --project-directory=SignIn/
+      
+      - name: Check current directory
+        run: |
+          pwd
+          ls -al 
+     
+      - name: Navigate to SignIn folder
+        run: |
+          cd SignIn/
+          ls
 
       - name: build archive
         run: |
