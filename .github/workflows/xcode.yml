@@ -20,7 +20,11 @@ jobs:
         echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > $CERTIFICATE_PATH
         echo "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode > $PP_PATH
 
-        security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k login.keychain
+        security create-keychain -p "" temporary.keychain
+        security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k temporary.keychain
+        security list-keychain -d user -s temporary.keychain
+        security set-key-partition-list -S apple-tool:,apple: -s -k "" temporary.keychain
+        security set-keychain-settings -lut 21600 temporary.keychain
 
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
