@@ -21,7 +21,7 @@ jobs:
         echo "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode > $PP_PATH
 
         security create-keychain -p "" temporary.keychain
-        security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k temporary.keychain
+        security import $CERTIFICATE_PATH -k temporary.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
         security list-keychain -d user -s temporary.keychain
         security set-key-partition-list -S apple-tool:,apple: -s -k "" temporary.keychain
         security set-keychain-settings -lut 21600 temporary.keychain
