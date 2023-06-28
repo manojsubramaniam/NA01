@@ -11,6 +11,9 @@ jobs:
     name: Build and Test default scheme using any available iPhone simulator
     runs-on: macos-latest
 
+    env:
+      P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+
     steps:
     - name: Set up certificate and provisioning profile
       run: |
@@ -29,5 +32,3 @@ jobs:
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
-      env:
-        P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
