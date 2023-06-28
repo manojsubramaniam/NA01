@@ -60,6 +60,6 @@ jobs:
       - name: build archive
         run: |
           xcodebuild -scheme SignIn" archive
-
+          shell: /bin/bash -e {0}
        #  xcodebuild -scheme "SignIn" -archivePath $RUNNER_TEMP/signin.xcarchive -sdk iphoneos -configuration Debug -destination generic/platform=iOS clean archive
            
