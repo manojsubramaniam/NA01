@@ -7,16 +7,13 @@ on:
     branches: main
 
 jobs:
-  ci:
+  build_with_signing:
     runs-on: macos-latest
-    defaults:
-      run: 
-        shell: bash
-        working-directory: working_directory_here
-
     steps:
+      - name: check Xcode version
+        run: /usr/bin/xcodebuild -version
 
-      - name: Checkout
+      - name: checkout repository
         uses: actions/checkout@v3
 
       - name: Install the Apple certificate and provisioning profile
@@ -34,3 +31,12 @@ jobs:
           # Apply the provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $RUNNER_TEMP/build_pp.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
+
+      - name: build archive
+        run: |
+          xcodebuild -scheme "I am Groot" \
+          -archivePath $RUNNER_TEMP/iamgroot.xcarchive \
+          -sdk iphoneos \
+          -configuration Debug \
+          -destination generic/platform=iOS \
+          clean archive
