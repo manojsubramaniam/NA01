@@ -34,9 +34,4 @@ jobs:
 
       - name: build archive
         run: |
-          xcodebuild -scheme "I am Groot" \
-          -archivePath $RUNNER_TEMP/iamgroot.xcarchive \
-          -sdk iphoneos \
-          -configuration Debug \
-          -destination generic/platform=iOS \
-          clean archive
+          xcodebuild -scheme "SignIn" -archivePath $RUNNER_TEMP/SignIn.xcarchive -sdk iphoneos -configuration Debug -destination generic/platform=iOS clean archive
