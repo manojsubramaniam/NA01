@@ -106,7 +106,7 @@ jobs:
             -allowProvisioningUpdates
  
  
- export:
+  export:
     name: Export IPA and Transfer to Remote Server
     needs: build
     runs-on: macos-latest
