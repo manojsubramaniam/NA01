@@ -104,7 +104,9 @@ jobs:
             DEVELOPMENT_TEAM="X372X3URRM" \
             PROVISIONING_PROFILE_SPECIFIER="DemoTest" \
             -allowProvisioningUpdates
-  export:
+ 
+ 
+ export:
     name: Export IPA and Transfer to Remote Server
     needs: build
     runs-on: macos-latest
