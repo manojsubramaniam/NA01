@@ -101,8 +101,8 @@ jobs:
 
       - name: Export Archive
         run: |
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/ExportOptions.plist" -exportPath "$RUNNER_TEMP/build"
-
+           xcodebuild -exportArchive -archivePath $RUNNER_TEMP/SignIn.xcarchive -exportOptionsPlist "$GITHUB_WORKSPACE/ExportOptions.plist" -exportPath $RUNNER_TEMP/build
+          
       - name: Verify Export
         run: |
           ls "$RUNNER_TEMP/build"
