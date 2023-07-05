@@ -90,10 +90,24 @@ jobs:
           project.save
           EOF
 
-      - name: Archive application
+      - name: Build and Archive
         run: |
-             xcodebuild archive -workspace SignIn/SignIn.xcworkspace -scheme SignIn -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -sdk iphonesimulator -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 13 Pro Max,OS=16.2' clean archive DEVELOPMENT_TEAM="X372X3URRM" PROVISIONING_PROFILE_SPECIFIER="DemoTest" -allowProvisioningUpdates
-             xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/ExportOptions.plist" -exportPath "$RUNNER_TEMP/build"
+          xcodebuild archive -workspace SignIn/SignIn.xcworkspace -scheme SignIn -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -sdk iphonesimulator -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 13 Pro Max,OS=16.2' clean archive DEVELOPMENT_TEAM="X372X3URRM" PROVISIONING_PROFILE_SPECIFIER="DemoTest" -allowProvisioningUpdates
 
-         
-     
+      - name: Verify Archive
+        run: |
+          ls "$RUNNER_TEMP/SignIn.xcarchive"
+          ls "$RUNNER_TEMP/SignIn.xcarchive/Products"
+
+      - name: Export Archive
+        run: |
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "$GITHUB_WORKSPACE/ExportOptions.plist" -exportPath "$RUNNER_TEMP/build"
+
+      - name: Verify Export
+        run: |
+          ls "$RUNNER_TEMP/build"
+
+      - name: Print Exported Files
+        run: |
+          ls -R "$RUNNER_TEMP/build" 
+
