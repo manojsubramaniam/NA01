@@ -91,29 +91,33 @@ jobs:
           EOF
 
       - name: Build and Archive
+        id: build_archive
         run: |
-          xcodebuild archive -workspace SignIn/SignIn.xcworkspace -scheme SignIn -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -sdk iphonesimulator -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 13 Pro Max,OS=16.2' clean archive DEVELOPMENT_TEAM="X372X3URRM" PROVISIONING_PROFILE_SPECIFIER="DemoTest" -allowProvisioningUpdates
+          xcodebuild archive -workspace SignIn/SignIn.xcworkspace \
+          -scheme SignIn -archivePath "$RUNNER_TEMP/SignIn.xcarchive" \
+          -sdk iphonesimulator -configuration Debug \
+          -destination 'platform=iOS Simulator,name=iPhone 13 Pro Max,OS=16.2' \
+          clean archive DEVELOPMENT_TEAM="X372X3URRM" \
+          PROVISIONING_PROFILE_SPECIFIER="DemoTest" -allowProvisioningUpdates \
+          | tee build_output.txt
 
-      - name: Verify Archive
+      - name: Extract CODE_SIGN_IDENTITY
+        id: extract_code_sign_identity
         run: |
-          ls "$RUNNER_TEMP/SignIn.xcarchive"
-          ls "$RUNNER_TEMP/SignIn.xcarchive/Products"
-      
-      - name: Export IPA
-        run: |
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "ExportOptions.plist" -exportPath "$RUNNER_TEMP/build"
-        shell: bash
-        
-      - name: Export IPA
-        run: |
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "ExportOptions.plist" -exportPath "$RUNNER_TEMP/build"
-          shell: /bin/bash --noprofile --norc -e -o pipefail {0}
-      
-      - name: Verify Export
-        run: |
-          ls "$RUNNER_TEMP/build"
+          CODE_SIGN_IDENTITY=$(grep -Eo 'CODE_SIGN_IDENTITY = .+' build_output.txt | awk -F '= ' '{print $2}')
+          echo "::set-output name=value::$CODE_SIGN_IDENTITY"
 
-      - name: Print Exported Files
+      - name: Export IPA
+        if: ${{ success() && steps.build_archive.outcome == 'success' }}
         run: |
-          ls -R "$RUNNER_TEMP/build" 
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" \
+          -exportOptionsPlist ExportOptions.plist \
+          -exportPath "$RUNNER_TEMP/IPA" \
+          CODE_SIGN_IDENTITY="${{ steps.extract_code_sign_identity.outputs.value }}"
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: SignIn-IPA
+          path: ${{ runner.temp }}/IPA
 
