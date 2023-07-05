@@ -92,7 +92,10 @@ jobs:
           
       - name: Clear Derived Data
         run: rm -rf ~/Library/Developer/Xcode/DerivedData
-      
+     
+      - name: Clean and Build
+        run: xcodebuild clean build -workspace SignIn/SignIn.xcworkspace -scheme SignIn -sdk iphonesimulator
+
       - name: Archive application
         run: |
           xcodebuild -workspace SignIn/SignIn.xcworkspace \
@@ -161,5 +164,3 @@ jobs:
           key: ${{ secrets.REMOTE_SERVER_PRIVATE_KEY }}
           source: IPAOutput/SignIn.ipa
           target: /home/ubuntu/iOS/SignIn.ipa
-      
-
