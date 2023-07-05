@@ -103,7 +103,12 @@ jobs:
         run: |
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "ExportOptions.plist" -exportPath "$RUNNER_TEMP/build"
         shell: bash
-
+        
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "ExportOptions.plist" -exportPath "$RUNNER_TEMP/build"
+          shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+      
       - name: Verify Export
         run: |
           ls "$RUNNER_TEMP/build"
