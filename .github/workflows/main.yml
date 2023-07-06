@@ -99,20 +99,14 @@ jobs:
           -destination 'platform=iOS Simulator,name=iPhone 13 Pro Max,OS=16.2' \
           clean archive DEVELOPMENT_TEAM="X372X3URRM" \
           PROVISIONING_PROFILE_SPECIFIER="DemoTest" -allowProvisioningUpdates \
-          | tee build_output.txt
-      
+          | tee build_output.txt 
+          
       - name: Check for Archive file
         run: ls "$RUNNER_TEMP/SignIn.xcarchive"
           
-      - name: Retrieve CODE_SIGN_IDENTITY
-        id: get_code_sign_identity
-        run: |
-          CODE_SIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "iPhone Distribution:" | awk '{print $2}')
-          echo "::set-output name=code_sign_identity::$CODE_SIGN_IDENTITY"
-
       - name: Build and Export
         run: |
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/IPA" CODE_SIGN_IDENTITY=""        
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/IPA" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO      
     
       - name: Upload IPA
         uses: actions/upload-artifact@v2
