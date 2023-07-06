@@ -1,32 +1,37 @@
-name: iOS starter workflow
-on: 
-  push:   
+name: Build and Export IPA
+
+on:
+  push:
     branches:
-      - main 
-  pull_request:   
-    branches: 
-      - main     
-        
-jobs: 
+      - main
+
+jobs:
   build:
-    name: Build and Test default scheme using any available iPhone simulator
     runs-on: macos-latest
-
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
- 
-      - name: check Xcode version
-        run: /usr/bin/xcodebuild -version
-
-      - name: Copy Podfile
-        run: cp -r SignIn/Podfile .
-
-      - name: Install CocoaPods
-        run: |
-          sudo gem install cocoapods -v '1.11.2'
-          pod repo list
-          pod setup
-
-      - name: Install dependencies
-        run: pod install --project-directory=SignIn/
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Xcode
+      uses: actions/setup-xcode@v2
+      with:
+        xcode-version: '12.x' # Replace with your desired Xcode version
+    
+    - name: Install CocoaPods
+      run: |
+        gem install cocoapods --pre
+        pod install
+    
+    - name: Set Default Scheme
+      run: |
+        scheme_list=$(xcodebuild -list -json | tr -d "\n")
+        default=$(echo "$scheme_list" | python3 -c "import sys, json; print(json.load(sys.stdin)['project']['targets'][0])")
+        echo "$default" > default
+        echo "Using default scheme: $default"
+    
+    - name: Build Archive
+      run: xcodebuild archive -workspace SignIn.xcworkspace -scheme "$(<default)" -archivePath "$RUNNER_TEMP/SignIn.xcarchive" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+    
+    - name: Export IPA
+      run: xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.app" -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/IPA" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
