@@ -100,20 +100,19 @@ jobs:
           clean archive DEVELOPMENT_TEAM="X372X3URRM" \
           PROVISIONING_PROFILE_SPECIFIER="DemoTest" -allowProvisioningUpdates \
           | tee build_output.txt
-
-      - name: Extract CODE_SIGN_IDENTITY
-        id: extract_code_sign_identity
+      
+      - name: Retrieve CODE_SIGN_IDENTITY
+        id: get_code_sign_identity
         run: |
-          CODE_SIGN_IDENTITY=$(grep -Eo 'CODE_SIGN_IDENTITY = .+' build_output.txt | awk -F '= ' '{print $2}')
-          echo "::set-output name=value::$CODE_SIGN_IDENTITY"
+          CODE_SIGN_IDENTITY=$(security find-identity -v -p codesigning | grep "iPhone Distribution:" | awk '{print $2}')
+          echo "::set-output name=code_sign_identity::$CODE_SIGN_IDENTITY"
 
-      - name: Export IPA
-        if: ${{ success() && steps.build_archive.outcome == 'success' }}
+      - name: Build and Export
         run: |
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" \
-          -exportOptionsPlist ExportOptions.plist \
-          -exportPath "$RUNNER_TEMP/IPA" \
-          CODE_SIGN_IDENTITY="${{ steps.extract_code_sign_identity.outputs.value }}"
+          # Access the CODE_SIGN_IDENTITY value from the previous step's output
+          CODE_SIGN_IDENTITY=${{ steps.get_code_sign_identity.outputs.code_sign_identity }}
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive" -exportOptionsPlist "ExportOptions.plist" -exportPath "$RUNNER_TEMP/build" CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY"
+   
 
       - name: Upload IPA
         uses: actions/upload-artifact@v2
