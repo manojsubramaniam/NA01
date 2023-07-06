@@ -101,6 +101,9 @@ jobs:
           PROVISIONING_PROFILE_SPECIFIER="DemoTest" -allowProvisioningUpdates \
           | tee build_output.txt
       
+      - name: Check for Archive file
+        run: ls "$RUNNER_TEMP/SignIn.xcarchive"
+          
       - name: Retrieve CODE_SIGN_IDENTITY
         id: get_code_sign_identity
         run: |
