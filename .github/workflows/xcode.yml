@@ -121,8 +121,8 @@ jobs:
           host: 54.84.190.107
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: app/build/outputs/apk/debug/app-debug.apk
-          target: /home/ubuntu/app-debug.apk
+          source: $RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.app
+          target: /home/ubuntu/SignIn.app
           
       - name: Retrieve CODE_SIGN_IDENTITY
         id: get_code_sign_identity
