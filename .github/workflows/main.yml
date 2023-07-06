@@ -104,7 +104,7 @@ jobs:
       - name: Check for Archive file
         run: |
          ls -a "$RUNNER_TEMP/SignIn.xcarchive"
-         ls -a "$RUNNER_TEMP/SignIn.xcarchive/Products"
+         ls -a "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications"
           
       - name: Build and Export
         run: |
