@@ -2,7 +2,7 @@ name: iOS starter workflow
 
 env:
   # The name of the main module repository
-  main_project_module: app
+  main_project_module: app 
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} 
   
 on: 
