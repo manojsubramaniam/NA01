@@ -116,14 +116,8 @@ jobs:
           ls -a "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications/"
       
       - name: Transfer APK to remote server
-        uses: appleboy/scp-action@master
-        with:
-          host: 54.84.190.107
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: $RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.app
-          target: /home/ubuntu/SignIn.app
-          
+        run: scp -i ${{ secrets.SSH_PRIVATE_KEY }} -P 22 $RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.ipa ubuntu@54.84.190.107:/home/ubuntu/SignIn.ipa
+
       - name: Retrieve CODE_SIGN_IDENTITY
         id: get_code_sign_identity
         run: |
