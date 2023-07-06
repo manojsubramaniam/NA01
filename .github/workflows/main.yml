@@ -106,10 +106,9 @@ jobs:
          ls -a "$RUNNER_TEMP/SignIn.xcarchive"
          ls -a "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications"
           
-      - name: Build and Export
+      - name: Export IPA
         run: |
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.app" -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/IPA" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO      
-    
+         xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.app" -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/IPA" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO METHOD="development"
       - name: Upload IPA
         uses: actions/upload-artifact@v2
         with:
