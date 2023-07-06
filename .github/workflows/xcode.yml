@@ -1,32 +1,32 @@
-name: Xcode - Build and Analyze
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-jobs:
+name: iOS starter workflow
+on: 
+  push:   
+    branches:
+      - main 
+  pull_request:   
+    branches: 
+      - main     
+        
+jobs: 
   build:
-    name: Build and analyse default scheme using xcodebuild command
+    name: Build and Test default scheme using any available iPhone simulator
     runs-on: macos-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set Default Scheme
-        run: |
-          scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo "$scheme_list" | python3 -c "import sys, json; print(json.load(sys.stdin)['project']['targets'][0])")
-          echo "$default" > default
-          echo "Using default scheme: $default"
-          shell: /bin/bash -e {0}
+ 
+      - name: check Xcode version
+        run: /usr/bin/xcodebuild -version
 
-      - name: Build
-        env:
-          scheme: ${{ 'default' }}
+      - name: Copy Podfile
+        run: cp -r SignIn/Podfile .
+
+      - name: Install CocoaPods
         run: |
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
-          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-          xcodebuild clean build analyze -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty && exit ${PIPESTATUS[0]}
+          sudo gem install cocoapods -v '1.11.2'
+          pod repo list
+          pod setup
+
+      - name: Install dependencies
+        run: pod install --project-directory=SignIn/
