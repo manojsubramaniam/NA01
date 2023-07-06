@@ -103,8 +103,8 @@ jobs:
           
       - name: Check for Archive file
         run: |
-         ls "$RUNNER_TEMP/SignIn.xcarchive"
-         ls "$RUNNER_TEMP/SignIn.xcarchive/Products"
+         ls -a "$RUNNER_TEMP/SignIn.xcarchive"
+         ls -a "$RUNNER_TEMP/SignIn.xcarchive/Products"
           
       - name: Build and Export
         run: |
