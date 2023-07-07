@@ -100,16 +100,15 @@ jobs:
       - name: Check for Archive file
         run: |
           ls -a "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications/"
-      
-      - name: Transfer IPA to Remote Server
+      - name: Remove SSH known_hosts file
+        run: rm -f $HOME/.ssh/known_hosts
+        
+      - name: SCP command
         run: |
           echo "$SSH_PRIVATE_KEY" > ssh_private_key.pem
           chmod 600 ssh_private_key.pem
-          scp -i ssh_private_key.pem -P 22 $RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.ipa ubuntu@54.84.190.107:/home/ubuntu/SignIn.ipa
-        env:
-          main_project_module: app
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          
+          scp -o "StrictHostKeyChecking=no" -i ssh_private_key.pem -P 22 $RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.ipa ubuntu@54.84.190.107:/home/ubuntu/SignIn.ipa
+
       - name: Retrieve CODE_SIGN_IDENTITY
         id: get_code_sign_identity
         run: |
