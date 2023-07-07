@@ -115,10 +115,15 @@ jobs:
         run: |
           ls -a "$RUNNER_TEMP/SignIn.xcarchive/Products/Applications/"
       
-      - name: Transfer APK to remote server
-       # run: scp -i ${{ secrets.SSH_PRIVATE_KEY }} -P 22 $RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.ipa ubuntu@54.84.190.107:/home/ubuntu/SignIn.ipa
-        run: scp -i ${{ secrets.SSH_PRIVATE_KEY }} -P 22 $RUNNER_TEMP/IPA/SignIn.ipa ubuntu@54.84.190.107:/home/ubuntu/SignIn.ipa
-
+      - name: Transfer IPA to Remote Server
+        run: |
+          echo "$SSH_PRIVATE_KEY" > ssh_private_key.pem
+          chmod 600 ssh_private_key.pem
+          scp -i ssh_private_key.pem -P 22 $RUNNER_TEMP/SignIn.xcarchive/Products/Applications/SignIn.ipa ubuntu@54.84.190.107:/home/ubuntu/SignIn.ipa
+        env:
+          main_project_module: app
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          
       - name: Retrieve CODE_SIGN_IDENTITY
         id: get_code_sign_identity
         run: |
